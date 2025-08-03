@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dummytest/main.dart';
 import 'package:dummytest/models/profit_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -50,19 +51,25 @@ class _RegisterPage extends State<RegisterPage> {
         decoration: InputDecoration(
             floatingLabelBehavior: FloatingLabelBehavior.never,
             errorStyle: GoogleFonts.poppins(
-              textStyle: const TextStyle(
+              textStyle: TextStyle(
                 fontSize: 12.0,
-                color: Colors.yellow,
+                color: Colors.red, // error text in red
                 fontWeight: FontWeight.w700,
               ),
             ),
-            fillColor: Colors.white,
+            fillColor: Theme.of(context).cardColor, // input background (white)
             filled: true,
-            prefixIcon: const Icon(Icons.mail, color: Colors.purple),
+            prefixIcon: Icon(
+              Icons.mail, // or relevant icon
+              color: Theme.of(context).colorScheme.secondary, // blue accent
+            ),
             contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-            hintText: "Enter Your Email",
+            hintText: "Enter Your Email", // or relevant hint
+            hintStyle: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
+            labelStyle: TextStyle(color: Color(0xFF232323)), // dark label
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary),
             )));
     final usernameField = TextFormField(
         autofocus: false,
@@ -195,7 +202,7 @@ class _RegisterPage extends State<RegisterPage> {
     final signUpBtn = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.secondary, // blue accent
       child: MaterialButton(
         padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
         minWidth: MediaQuery.of(context).size.width * 0.5,
@@ -210,10 +217,10 @@ class _RegisterPage extends State<RegisterPage> {
           "SIGN UP",
           textAlign: TextAlign.center,
           style: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-                fontSize: 22,
-                color: Color(0xff360c72),
-                fontWeight: FontWeight.bold),
+            textStyle: TextStyle(
+              fontSize: 22,
+              color: Colors.white,
+              fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -228,26 +235,15 @@ class _RegisterPage extends State<RegisterPage> {
         : Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
-              backgroundColor: const Color(
-                0xff360c72,
-              ),
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               title: Text(
                 'Create New Account',
-                style: GoogleFonts.poppins(),
+                style: GoogleFonts.poppins(color: Color(0xFF232323)),
               ),
             ),
             body: Container(
               padding: const EdgeInsets.all(20.0),
-              decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                    Color(0xff360c72),
-                    Color(0xcc360c72),
-                    Color(0x99360c72),
-                    Color(0x66360c72),
-                  ])),
+              color: Theme.of(context).scaffoldBackgroundColor,
               child: Form(
                 key: _formkey,
                 child: Column(

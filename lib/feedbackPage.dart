@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:dummytest/homePage.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'models/feedback_model.dart';
 import 'models/user_model.dart';
 
@@ -34,7 +33,7 @@ class MapScreenState extends State<FeedbackPage> {
         .doc(user!.uid)
         .get()
         .then((value) {
-      this.userModel = UserModel.fromMap(value.data());
+      this.userModel = UserModel.fromMap(value.data() ?? {});
       setState(() {});
     });
   }
@@ -49,6 +48,7 @@ class MapScreenState extends State<FeedbackPage> {
           if (value!.isEmpty) {
             return 'Please Enter Feedback Title !';
           }
+          return null;
         },
         onSaved: (value) {
           name = '${userModel.username}';
@@ -59,20 +59,28 @@ class MapScreenState extends State<FeedbackPage> {
         decoration: InputDecoration(
             floatingLabelBehavior: FloatingLabelBehavior.never,
             errorStyle: GoogleFonts.poppins(
-              textStyle: const TextStyle(
+              textStyle: TextStyle(
                 fontSize: 12.0,
-                color: Colors.yellow,
+                color: Colors.red, // error text in red
                 fontWeight: FontWeight.w700,
               ),
             ),
-            fillColor: Colors.white,
+            fillColor: Theme.of(context).cardColor, // input background (white)
             filled: true,
-            prefixIcon: const Icon(Icons.title, color: Colors.purple),
-            contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+            prefixIcon: Icon(
+              Icons.title, // or relevant icon
+              color: Theme.of(context).colorScheme.secondary, // blue accent
+            ),
             hintText: "Enter Feedback Title",
+            hintStyle: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
+            labelStyle: TextStyle(color: Color(0xFF232323)), // dark label
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-            )));
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary),
+            ),
+        ),
+        style: TextStyle(color: Color(0xFF232323)), // input text dark
+    );
     final detailsField = TextFormField(
         minLines: 2,
         maxLines: 6,
@@ -83,6 +91,7 @@ class MapScreenState extends State<FeedbackPage> {
           if (value!.isEmpty) {
             return 'Please Elaborate !';
           }
+          return null;
         },
         onSaved: (value) {
           details.text = value!;
@@ -109,7 +118,7 @@ class MapScreenState extends State<FeedbackPage> {
     final submitBtn = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.secondary, // blue accent
       child: MaterialButton(
         padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
         minWidth: MediaQuery.of(context).size.width * 0.5,
@@ -123,10 +132,10 @@ class MapScreenState extends State<FeedbackPage> {
           "SUBMIT FEEDBACK",
           textAlign: TextAlign.center,
           style: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-                fontSize: 20,
-                color: Color(0xff360c72),
-                fontWeight: FontWeight.bold),
+            textStyle: TextStyle(
+              fontSize: 20,
+              color: Colors.white,
+              fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -134,16 +143,15 @@ class MapScreenState extends State<FeedbackPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: const Color(
-          0xff360c72,
-        ),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(
           'SEND FEEDBACK',
-          style: GoogleFonts.poppins(),
+          style: GoogleFonts.poppins(color: Color(0xFF232323)),
         ),
       ),
       body: Container(
         padding: const EdgeInsets.all(20.0),
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: Form(
           key: _formkey,
           child: Column(
@@ -153,8 +161,7 @@ class MapScreenState extends State<FeedbackPage> {
                 child: Text(
                   'If you encountered any difficulties while using the system, '
                   'please let me know in order for me '
-                  'to improve the system and provide a better service '
-                  'in the future. Thank You ! :D ',
+                  'to improve the system and provide a better service ',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                     textStyle: const TextStyle(
@@ -178,22 +185,6 @@ class MapScreenState extends State<FeedbackPage> {
                 height: 20.0,
               ),
               const Spacer(),
-              TextButton.icon(
-                  onPressed: () {
-                    _launchUrl();
-                  },
-                  icon: const Text(
-                    'My GitHub Profile',
-                    style: TextStyle(color: Colors.black, fontSize: 16),
-                  ),
-                  label:
-                      // ClipOval(
-                      //   child: Image.asset('images/github-logo.png', fit: BoxFit.cover),
-                      // ),
-                      const CircleAvatar(
-                    backgroundImage: AssetImage('images/github-logo.png'),
-                    backgroundColor: Colors.white,
-                  ))
             ],
           ),
         ),
@@ -202,7 +193,6 @@ class MapScreenState extends State<FeedbackPage> {
   }
 
   void submit(String title) async {
-    var msg = '';
     try {
       postDetailsToFireStore();
     } on FirebaseAuthException catch (e) {
@@ -248,13 +238,5 @@ class MapScreenState extends State<FeedbackPage> {
         (context),
         MaterialPageRoute(builder: (context) => const HomePage()),
         (route) => false);
-  }
-
-  /// Github Profile
-  Future<void> _launchUrl() async {
-    final Uri _url = Uri.parse('https://github.com/datsabahandude');
-    if (!await launchUrl(_url)) {
-      throw Exception('Could not launch $_url');
-    }
   }
 }

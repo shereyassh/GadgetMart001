@@ -678,8 +678,7 @@ class _ViewItemState extends State<ViewItem> {
                   firstDate: DateTime(2000),
                   lastDate: DateTime(2100),
                 );
-                if (newdate == null) return;
-                setState(() => datenow = newdate);
+                setState(() => datenow = newdate ?? datenow);
               },
             ),
             TextButton(
@@ -734,8 +733,7 @@ class _ViewItemState extends State<ViewItem> {
                   firstDate: DateTime(2000),
                   lastDate: DateTime(2100),
                 );
-                if (newdate == null) return;
-                setState(() => datenow = newdate);
+                setState(() => datenow = newdate ?? datenow);
               },
             ),
             TextButton(
@@ -893,7 +891,7 @@ class _ViewItemState extends State<ViewItem> {
       if (widget.card.img != null) {
         FirebaseStorage.instance.refFromURL('${widget.card.img}').delete();
       }
-    } on PlatformException catch (e) {
+    } on PlatformException {
       Fluttertoast.showToast(
           msg: "Something went wrong!\n(｡•᎔•｡)",
           toastLength: Toast.LENGTH_SHORT,

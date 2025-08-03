@@ -1,14 +1,17 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dummytest/models/user_model.dart';
+  import 'package:dummytest/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';  
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:file_picker/file_picker.dart';
 // import 'package:path_provider/path_provider.dart';
 //import 'package:path/path.dart';
 import 'manageItem.dart';
@@ -38,16 +41,44 @@ class MapScreenState extends State<AddItem>
   UserModel userModel = UserModel();
   ItemModel itemModel = ItemModel();
   File? image;
+  Uint8List? webImageBytes;
   UploadTask? uploadTask;
   String? url;
+
+  Future pickImage() async {
+    if (kIsWeb) {
+      final result = await FilePicker.platform.pickFiles(type: FileType.image);
+      if (result != null && result.files.single.bytes != null) {
+        setState(() {
+          webImageBytes = result.files.single.bytes;
+        });
+      }
+    } else {
+      try {
+        final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
+        if (picked == null) return;
+        final imagetemp = File(picked.path);
+        setState(() => image = imagetemp);
+      } on PlatformException catch (e) {
+        debugPrint('Failed to pick image: $e');
+      }
+    }
+    Navigator.of(context).pop();
+  }
 
   Future uploadFile() async {
     var date = DateTime.now().toString();
     final path = '${user!.uid}/items/$date';
-    final file = File(image!.path);
-    final ref = FirebaseStorage.instance.ref().child(path);
-    uploadTask = ref.putFile(file);
-
+    Reference ref = FirebaseStorage.instance.ref().child(path);
+    if (kIsWeb && webImageBytes != null) {
+      uploadTask = ref.putData(webImageBytes!);
+    } else if (!kIsWeb && image != null) {
+      final file = File(image!.path);
+      uploadTask = ref.putFile(file);
+    } else {
+      debugPrint('No image selected');
+      return;
+    }
     final snapshot = await uploadTask!.whenComplete(() => {});
     final urlDownload = await snapshot.ref.getDownloadURL();
     setState(() {
@@ -59,32 +90,6 @@ class MapScreenState extends State<AddItem>
   @override
   void initState() {
     super.initState();
-  }
-
-  Future _pickImageCamera() async {
-    try {
-      final image = await ImagePicker().pickImage(source: ImageSource.camera);
-      if (image == null) return;
-      final imagetemp = File(image.path);
-      setState(() => this.image = imagetemp);
-    } on PlatformException catch (e) {
-      debugPrint('Failed to pick image: $e');
-    }
-    Navigator.of(context).pop();
-  }
-
-  Future _pickImageGallery() async {
-    try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image == null) return;
-      final imagetemp = File(image.path);
-      //final imagepermanent = await saveImagePermanently(image.path);
-      setState(() => this.image = imagetemp);
-      //setState(() => this.image = imagepermanent);
-    } on PlatformException catch (e) {
-      debugPrint('Failed to pick image: $e');
-    }
-    Navigator.of(context).pop();
   }
 
   /*Future<File> saveImagePermanently(String imagePath) async{
@@ -300,20 +305,7 @@ class MapScreenState extends State<AddItem>
                     Stack(
                       children: [
                         Center(
-                          child: image != null
-                              ? ClipOval(
-                                  child: Image.file(
-                                    image!,
-                                    width: 180,
-                                    height: 180,
-                                    fit: BoxFit.cover,
-                                  ),
-                                )
-                              : const CircleAvatar(
-                                  backgroundImage:
-                                      AssetImage("images/profitinventory.png"),
-                                  backgroundColor: Colors.transparent,
-                                  radius: 120),
+                          child: buildImagePreview(),
                         ),
                         Positioned(
                             top: 120,
@@ -343,7 +335,7 @@ class MapScreenState extends State<AddItem>
                                               InkWell(
                                                 splashColor:
                                                     Colors.purpleAccent,
-                                                onTap: _pickImageCamera,
+                                                onTap: pickImage,
                                                 child: Row(
                                                   children: [
                                                     const Padding(
@@ -373,7 +365,7 @@ class MapScreenState extends State<AddItem>
                                               InkWell(
                                                 splashColor:
                                                     Colors.purpleAccent,
-                                                onTap: _pickImageGallery,
+                                                onTap: pickImage,
                                                 child: Row(
                                                   children: [
                                                     const Padding(
@@ -445,11 +437,11 @@ class MapScreenState extends State<AddItem>
                         minWidth: MediaQuery.of(context).size.width * 0.6,
                         onPressed: () async {
                           if ((_formkey.currentState!.validate()) &&
-                              image != null) {
+                              (kIsWeb ? webImageBytes != null : image != null)) {
                             _formkey.currentState!.save();
                             setState(() => isLoading = true);
-                            update(inameEditingController.text);
-                          } else if (image == null) {
+                            uploadFile();
+                          } else if (kIsWeb ? webImageBytes == null : image == null) {
                             Fluttertoast.showToast(
                                 msg: "Please Upload an Image!",
                                 toastLength: Toast.LENGTH_SHORT,
@@ -479,6 +471,43 @@ class MapScreenState extends State<AddItem>
               ),
             ),
     );
+  }
+
+  Widget buildImagePreview() {
+    if (kIsWeb && webImageBytes != null) {
+      return ClipOval(
+        child: Image.memory(
+          webImageBytes!,
+          width: 180,
+          height: 180,
+          fit: BoxFit.cover,
+        ),
+      );
+    } else if (!kIsWeb && image != null) {
+      return ClipOval(
+        child: Image.file(
+          image!,
+          width: 180,
+          height: 180,
+          fit: BoxFit.cover,
+        ),
+      );
+    } else if (url != null) {
+      return ClipOval(
+        child: Image.network(
+          url!,
+          width: 200,
+          height: 200,
+          fit: BoxFit.cover,
+        ),
+      );
+    } else {
+      return const CircleAvatar(
+        backgroundImage: AssetImage("images/profitinventory.png"),
+        backgroundColor: Colors.transparent,
+        radius: 100,
+      );
+    }
   }
 
   void update(String username) async {

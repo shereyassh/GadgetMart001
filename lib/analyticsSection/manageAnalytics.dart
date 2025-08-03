@@ -1,11 +1,11 @@
 import 'package:dummytest/analyticsSection/bestScreen.dart';
-import 'package:dummytest/analyticsSection/salesScreen.dart';
-import 'package:dummytest/analyticsSection/tostockScreen.dart';
+import 'package:dummytest/analyticsSection/salesScreen.dart'; 
+import 'package:dummytest/analyticsSection/tostockScreen.dart'; 
 import 'package:dummytest/homePage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class AnalyticsPage extends StatefulWidget {
+class AnalyticsPage extends StatefulWidget {  
   const AnalyticsPage({Key? key}) : super(key: key);
 
   @override
@@ -19,7 +19,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
     const BestScreen(),
     const StockScreen(),
   ];
-  @override
+   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           leading: IconButton(

@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
             Material(
                 elevation: 5,
                 borderRadius: BorderRadius.circular(15),
-                color: Colors.white,
+                color: Theme.of(context).cardColor, // for Material/Buttons
                 child: MaterialButton(
                     //padding: EdgeInsets.fromLTRB(25, 15, 25, 15),
                     minWidth: MediaQuery.of(context).size.width * 0.60,
@@ -46,9 +46,9 @@ class _HomePageState extends State<HomePage> {
                       "MANAGE ITEM",
                       textAlign: TextAlign.center,
                       style: GoogleFonts.inknutAntiqua(
-                        textStyle: const TextStyle(
+                        textStyle: TextStyle(
                             fontSize: 18,
-                            color: Color(0xff360c72),
+                            color: Theme.of(context).colorScheme.secondary, // blue accent
                             fontWeight: FontWeight.bold),
                       ),
                     )))
@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
             Material(
                 elevation: 5,
                 borderRadius: BorderRadius.circular(15),
-                color: Colors.white,
+                color: Theme.of(context).cardColor, // for Material/Buttons
                 child: MaterialButton(
                     //padding: EdgeInsets.fromLTRB(25, 15, 25, 15),
                     minWidth: MediaQuery.of(context).size.width * 0.60,
@@ -81,9 +81,9 @@ class _HomePageState extends State<HomePage> {
                       "SALES HISTORY",
                       textAlign: TextAlign.center,
                       style: GoogleFonts.inknutAntiqua(
-                        textStyle: const TextStyle(
+                        textStyle: TextStyle(
                             fontSize: 18,
-                            color: Color(0xff360c72),
+                            color: Theme.of(context).colorScheme.secondary, // blue accent
                             fontWeight: FontWeight.bold),
                       ),
                     )))
@@ -102,7 +102,7 @@ class _HomePageState extends State<HomePage> {
             Material(
                 elevation: 5,
                 borderRadius: BorderRadius.circular(15),
-                color: Colors.white,
+                color: Theme.of(context).cardColor, // for Material/Buttons
                 child: MaterialButton(
                     //padding: EdgeInsets.fromLTRB(25, 15, 25, 15),
                     minWidth: MediaQuery.of(context).size.width * 0.60,
@@ -116,9 +116,9 @@ class _HomePageState extends State<HomePage> {
                       "ANALYTICS",
                       textAlign: TextAlign.center,
                       style: GoogleFonts.inknutAntiqua(
-                        textStyle: const TextStyle(
+                        textStyle: TextStyle(
                             fontSize: 18,
-                            color: Color(0xff360c72),
+                            color: Theme.of(context).colorScheme.secondary, // blue accent
                             fontWeight: FontWeight.bold),
                       ),
                     )))
@@ -137,7 +137,7 @@ class _HomePageState extends State<HomePage> {
             Material(
                 elevation: 5,
                 borderRadius: BorderRadius.circular(15),
-                color: Colors.white,
+                color: Theme.of(context).cardColor, // for Material/Buttons
                 child: MaterialButton(
                     //padding: EdgeInsets.fromLTRB(25, 15, 25, 15),
                     minWidth: MediaQuery.of(context).size.width * 0.60,
@@ -151,9 +151,9 @@ class _HomePageState extends State<HomePage> {
                       "SEND FEEDBACK",
                       textAlign: TextAlign.center,
                       style: GoogleFonts.inknutAntiqua(
-                        textStyle: const TextStyle(
+                        textStyle: TextStyle(
                             fontSize: 18,
-                            color: Color(0xff360c72),
+                            color: Theme.of(context).colorScheme.secondary, // blue accent
                             fontWeight: FontWeight.bold),
                       ),
                     )))
@@ -171,7 +171,7 @@ class _HomePageState extends State<HomePage> {
         .doc(user!.uid)
         .get()
         .then((value) {
-      this.userModel = UserModel.fromMap(value.data());
+      this.userModel = UserModel.fromMap(value.data() ?? {});
       setState(() {});
     });
   }
@@ -197,21 +197,21 @@ class _HomePageState extends State<HomePage> {
                   : Text(
                       "${userModel.username} ",
                       style: GoogleFonts.spaceMono(
-                        textStyle: const TextStyle(
+                        textStyle: TextStyle(
                             fontSize: 20,
-                            color: Colors.yellowAccent,
+                            color: Theme.of(context).colorScheme.secondary, // yellow accent
                             decorationColor: Colors.white,
                             fontWeight: FontWeight.w800),
                       ),
                     ),
-              label: const Icon(
+              label: Icon(
                 Icons.account_circle_rounded,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.secondary,
                 size: 30,
               ),
             ),
           ],
-          backgroundColor: const Color(0xff360c72),
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           elevation: 0.0,
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
@@ -221,9 +221,9 @@ class _HomePageState extends State<HomePage> {
             key: _formkey,
             child: Column(
               children: [
-                const Center(
+                Center(
                   child: CircleAvatar(
-                    backgroundImage: AssetImage("images/profitinventory.png"),
+                    backgroundImage: AssetImage("images/logo.png"),
                     backgroundColor: Colors.transparent,
                     radius: 140,
                   ),
@@ -257,9 +257,7 @@ class _HomePageState extends State<HomePage> {
             'Logout',
             style: GoogleFonts.poppins(),
           ),
-          backgroundColor: const Color(
-            0xff360c72,
-          ),
+          backgroundColor: Theme.of(context).colorScheme.secondary,
           onPressed: () => {
             setState(() {
               FirebaseAuth.instance.signOut();
