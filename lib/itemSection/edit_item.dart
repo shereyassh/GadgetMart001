@@ -6,7 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:google_fonts/google_fonts.dart';  
 import 'package:image_picker/image_picker.dart';
 import '../models/itemlist_Display.dart';
 import 'manageItem.dart';
@@ -52,7 +52,7 @@ class MapScreenState extends State<EditItem>
         .doc('${widget.receive.date}')
         .get()
         .then((value) {
-      itemModel = ItemModel.fromMap(value.data());
+      itemModel = ItemModel.fromMap(value.data() ?? {});
       setState(() {});
       if (itemModel.tprofit != null) {
         profit = '${itemModel.tprofit}';

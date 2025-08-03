@@ -75,12 +75,8 @@ class _SalesScreenState extends State<SalesScreen> {
       );
   @override
   Widget build(BuildContext context) {
-    if (tprofit != null) {
-      total = '0';
-    } else {
-      tprofit = '0';
-    }
-    return Center(
+    total = '0';
+      return Center(
       child: Container(
         padding: const EdgeInsets.all(20.0),
         child: Form(

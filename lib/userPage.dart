@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dummytest/main.dart';
 import 'package:dummytest/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,7 @@ class MapScreenState extends State<ProfilePage>
         .doc(user!.uid)
         .get()
         .then((value) {
-      this.userModel = UserModel.fromMap(value.data());
+      this.userModel = UserModel.fromMap(value.data() ?? {});
       setState(() {});
     });
   }

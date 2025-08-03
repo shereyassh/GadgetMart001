@@ -7,7 +7,7 @@ class ItemCard extends StatelessWidget {
   final dumm card;
 
   ItemCard(this.card);
-  /*const ItemCard(
+  /*const ItemCard( 
       {
         Key? key,
         required this.iname,

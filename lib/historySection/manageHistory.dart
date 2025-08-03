@@ -29,7 +29,7 @@ class _ItemPage extends State<HistoryPage> {
         .doc(user!.uid)
         .get()
         .then((value) {
-      this.userModel = UserModel.fromMap(value.data());
+      this.userModel = UserModel.fromMap(value.data() ?? {});
       setState(() {});
     });
     getHistoryList();
@@ -50,12 +50,10 @@ class _ItemPage extends State<HistoryPage> {
                   MaterialPageRoute(builder: (context) => const HomePage()));
             },
           ),
-          backgroundColor: const Color(
-            0xff360c72,
-          ),
+          backgroundColor: Color(0xFFE5E6EA), // slightly darker than white
           title: Text(
             'HISTORY',
-            style: GoogleFonts.poppins(),
+            style: GoogleFonts.poppins(color: Color(0xFF232323)),
           ),
           actions: [
             TextButton(
@@ -88,6 +86,7 @@ class _ItemPage extends State<HistoryPage> {
           ]),
       body: Container(
         padding: const EdgeInsets.all(20),
+        color: Color(0xFFE5E6EA), // slightly darker than white
         //width: 200,
         child: ListView.builder(
             scrollDirection: Axis.vertical,

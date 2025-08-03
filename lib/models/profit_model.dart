@@ -1,4 +1,6 @@
-class ProfitModel{
+import 'package:dummytest/homePage.dart';
+
+class ProfitModel {
   String? profit;
   String? yy;
   String? mm;

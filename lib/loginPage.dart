@@ -18,9 +18,11 @@ class _LoginPage extends State<LoginPage> {
   bool isLoading = false;
   FirebaseAuth _auth = FirebaseAuth.instance;
   void _loginSave() async {
+    print('Attempting login with: \\_email= [32m [1m$_email [0m, \\_password= [31m [1m$_password [0m');
     try {
-      await _auth.signInWithEmailAndPassword(
-          email: _email, password: _password);
+      final result = await _auth.signInWithEmailAndPassword(
+        email: _email, password: _password);
+      print('Login successful: user.uid = ${result.user?.uid}');
       setState(() => isLoading = false);
       Fluttertoast.showToast(
           msg: "(☞ﾟ∀ﾟ)☞ Success",
@@ -36,6 +38,7 @@ class _LoginPage extends State<LoginPage> {
       );
     } catch (e) {
       setState(() => isLoading = false);
+      print('Login failed: ${e.runtimeType} - ${e.toString()}');
       Fluttertoast.showToast(
           msg: "ｰ(  ｰ̀дｰ́ )Incorrect Credentials",
           toastLength: Toast.LENGTH_SHORT,
@@ -56,24 +59,26 @@ class _LoginPage extends State<LoginPage> {
         decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.never,
           errorStyle: GoogleFonts.poppins(
-            textStyle: const TextStyle(
+            textStyle: TextStyle(
               fontSize: 16.0,
-              color: Colors.yellow,
+              color: Colors.red, // error text in red
               fontWeight: FontWeight.w700,
             ),
           ),
-          fillColor: Colors.white,
+          fillColor: Theme.of(context).cardColor, // input background (white)
           filled: true,
-          prefixIcon: const Icon(
-            Icons.email,
-            color: Colors.purple,
+          prefixIcon: Icon(
+            Icons.email, // or relevant icon
+            color: Theme.of(context).colorScheme.secondary, // blue accent
           ),
           labelText: "Email",
+          labelStyle: TextStyle(color: Color(0xFF232323)), // dark label
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: const BorderSide(color: Colors.purple),
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary),
           ),
         ),
+        style: TextStyle(color: Color(0xFF232323)), // input text dark
         validator: (value) {
           if (value!.isEmpty) {
             return 'Please Enter your Email !';
@@ -97,24 +102,26 @@ class _LoginPage extends State<LoginPage> {
         decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.never,
           errorStyle: GoogleFonts.poppins(
-            textStyle: const TextStyle(
+            textStyle: TextStyle(
               fontSize: 16.0,
-              color: Colors.yellow,
+              color: Colors.red, // error text in red
               fontWeight: FontWeight.w700,
             ),
           ),
           fillColor: Colors.white,
           filled: true,
-          prefixIcon: const Icon(
+          prefixIcon: Icon(
             Icons.lock,
-            color: Colors.purple,
+            color: Theme.of(context).colorScheme.secondary,
           ),
           labelText: "Password",
+          labelStyle: TextStyle(color: Colors.black), // label text black
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: const BorderSide(color: Colors.purple),
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary),
           ),
         ),
+        style: TextStyle(color: Colors.black), // input text black
         validator: (value) {
           RegExp regex = new RegExp(r'^.{6,}$');
           if (value!.isEmpty) {
@@ -134,7 +141,7 @@ class _LoginPage extends State<LoginPage> {
     return Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.secondary, // for button
       clipBehavior: Clip.antiAlias,
       child: MaterialButton(
         padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
@@ -150,10 +157,10 @@ class _LoginPage extends State<LoginPage> {
           "LOGIN",
           textAlign: TextAlign.center,
           style: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-                fontSize: 20,
-                color: Color(0xff360c72),
-                fontWeight: FontWeight.bold),
+            textStyle: TextStyle(
+              fontSize: 20,
+              color: Theme.of(context).colorScheme.secondary,
+              fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -167,9 +174,7 @@ class _LoginPage extends State<LoginPage> {
         return false;
       },
       child: Scaffold(
-        backgroundColor: const Color(
-          0xff360c72,
-        ),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         resizeToAvoidBottomInset: false,
         body: isLoading
             ? const Center(
@@ -194,7 +199,7 @@ class _LoginPage extends State<LoginPage> {
                               const Center(
                                 child: CircleAvatar(
                                   backgroundImage:
-                                      AssetImage("images/profitinventory.png"),
+                                      AssetImage("images/logo.png"),
                                   backgroundColor: Colors.transparent,
                                   radius: 140,
                                 ),
@@ -215,7 +220,7 @@ class _LoginPage extends State<LoginPage> {
                                       textStyle: const TextStyle(
                                           fontWeight: FontWeight.w600,
                                           fontSize: 16,
-                                          color: Colors.white),
+                                          color: Colors.black),
                                     ),
                                   ),
                                   GestureDetector(
